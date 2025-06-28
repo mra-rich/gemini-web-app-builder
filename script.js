@@ -126,6 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 geminiResponseContainer.classList.remove('hidden');
             } else { // Main app view
                 appContainer.classList.remove('hidden');
+                // Ensure animation classes are reset for proper display
+                appContainer.classList.remove('content-fade-enter-from');
+                appContainer.classList.add('content-fade-enter-active', 'content-fade-enter-to');
 
                 // Rest of the app container specific logic
                 setFilteredQuestions(currentMode);
@@ -285,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (question.type === 'color-swatch' && option.colors) {
                     colorSwatchesHtml = `<div class="flex mt-2 space-x-1">` +
-                                        option.colors.map(color => `<div class="w-6 h-6 rounded-full shadow-inner" style="background-color: ${color};"><\/div>`).join('') +
+                                        option.colors.map(color => `<div class="w-6 h-6 rounded-full shadow-inner" style="background-color: ${color};">\u003c/div>`).join('') +
                                         `</div>`;
                 }
 
@@ -299,24 +302,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 optionsHtml += `
                     <button type="button" class="${buttonClasses}"
                             onclick="handleSelect('${question.id}', '${option.value}')">
-                        ${option.icon && icons[option.icon] ? `<div class="lucide-icon">${icons[option.icon]}<\/div>` : ''}
+                        ${option.icon && icons[option.icon] ? `<div class="lucide-icon">${icons[option.icon]}\u003c/div>` : ''}
                         <span class="font-semibold text-gray-800 text-center">${option.label}</span>
                         ${descriptionHtml}
                         ${exampleTextHtml}
                         ${colorSwatchesHtml}
-                    <\/button>
+                    \u003c/button>
                 `;
             });
 
             if (question.id === 'appType' && selectedValue === 'other') {
                 optionsHtml += `
                     <div class="flex flex-col items-center p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
-                        <span class="font-semibold text-gray-800 mb-2">Jelaskan jenis aplikasi lainnya:<\/span>
+                        <span class="font-semibold text-gray-800 mb-2">Jelaskan jenis aplikasi lainnya:\u003c/span>
                         <input type="text" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                                placeholder="Masukkan detail lain..."
                                value="${promptDetails.appTypeOther || ''}"
                                oninput="handleOtherInput(event)">
-                    <\/div>
+                    \u003c/div>
                 `;
             }
         }
@@ -523,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (promptDetails.authenticationType && promptDetails.authenticationType !== 'none') {
             const authOption = questionsData.find(q => q.id === 'authenticationType').options.find(o => o.value === promptDetails.authenticationType);
-            prompt += `- **Jenis Autentikasi (jika diperlukan):** ${authOption?.label || promptDetails.authenticationType}\n`;
+            prompt += `- **Jenis Autentikasi (jika diperlukan)::** ${authOption?.label || promptDetails.authenticationType}\n`;
         }
 
         if (promptDetails.databaseType) {
@@ -580,8 +583,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Dashboard</a></li>
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Profil</a></li>
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Pengaturan</a></li>
-                    <\/ul>
-                <\/aside>
+                    \u003c/ul>
+                \u003c/aside>
             `;
         }
 
@@ -592,13 +595,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="text-xl font-semibold mb-2">Kartu Konten 1</h3>
                         <p class="text-gray-700">Ini adalah contoh kartu konten. Bisa menampilkan informasi singkat.</p>
                         <button class="mt-4 px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Pelajari Lebih</button>
-                    <\/div>
+                    \u003c/div>
                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                         <h3 class="text-xl font-semibold mb-2">Kartu Konten 2</h3>
                         <p class="text-gray-700">Kartu ini bisa digunakan untuk berita, produk, atau layanan.</p>
                         <button class="mt-4 px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">Lihat Detail</button>
-                    <\/div>
-                <\/section>
+                    \u003c/div>
+                \u003c/section>
             `;
         }
 
@@ -608,62 +611,62 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="text-xl font-semibold mb-4">Formulir Kontak</h3>
                     <form>
                         <div class="mb-4">
-                            <label for="nama" class="block text-gray-700 text-sm font-bold mb-2">Nama:<\/label>
+                            <label for="nama" class="block text-gray-700 text-sm font-bold mb-2">Nama:\u003c/label>
                             <input type="text" id="nama" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <\/div>
+                        \u003c/div>
                         <div class="mb-4">
-                            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:<\/label>
+                            <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:\u003c/label>
                             <input type="email" id="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <\/div>
+                        \u003c/div>
                         <div class="mb-4">
-                            <label for="pesan" class="block text-gray-700 text-sm font-bold mb-2">Pesan:<\/label>
-                            <textarea id="pesan" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"><\/textarea>
-                        <\/div>
-                        <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">Kirim Pesan<\/button>
-                    <\/form>
-                <\/section>
+                            <label for="pesan" class="block text-gray-700 text-sm font-bold mb-2">Pesan:\u003c/label>
+                            <textarea id="pesan" rows="4" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">\u003c/textarea>
+                        \u003c/div>
+                        <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">Kirim Pesan\u003c/button>
+                    \u003c/form>
+                \u003c/section>
             `;
         }
 
         if (uiComponents.includes('call-to-action-buttons')) {
             bodyContent += `
                 <section class="mt-8 text-center">
-                    <button class="px-8 py-4 bg-green-500 text-white text-lg font-bold rounded-full shadow-lg hover:bg-green-600 transition duration-300 ease-in-out">Mulai Sekarang!<\/button>
-                <\/section>
+                    <button class="px-8 py-4 bg-green-500 text-white text-lg font-bold rounded-full shadow-lg hover:bg-green-600 transition duration-300 ease-in-out">Mulai Sekarang!\u003c/button>
+                \u003c/section>
             `;
         }
 
         if (uiComponents.includes('image-gallery-slider')) {
             bodyContent += `
                 <section class="mt-8">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Galeri Gambar<\/h3>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Galeri Gambar\u003c/h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <img src="https://placehold.co/300x200/${mainColor.substring(1)}/FFFFFF?text=Gambar+1" alt="Gambar 1" class="w-full h-auto rounded-lg shadow-md">
                         <img src="https://placehold.co/300x200/${mainColor.substring(1)}/FFFFFF?text=Gambar+2" alt="Gambar 2" class="w-full h-auto rounded-lg shadow-md">
                         <img src="https://placehold.co/300x200/${mainColor.substring(1)}/FFFFFF?text=Gambar+3" alt="Gambar 3" class="w-full h-auto rounded-lg shadow-md">
                         <img src="https://placehold.co/300x200/${mainColor.substring(1)}/FFFFFF?text=Gambar+4" alt="Gambar 4" class="w-full h-auto rounded-lg shadow-md">
-                    <\/div>
-                <\/section>
+                    \u003c/div>
+                \u003c/section>
             `;
         }
 
         if (uiComponents.includes('user-authentication')) {
             bodyContent += `
                 <section class="mt-8 bg-white p-6 rounded-lg shadow-md border border-gray-200 max-w-sm mx-auto">
-                    <h3 class="text-xl font-semibold mb-4 text-center">Login / Daftar<\/h3>
+                    <h3 class="text-xl font-semibold mb-4 text-center">Login / Daftar\u003c/h3>
                     <form>
                         <div class="mb-4">
-                            <label for="auth-email" class="block text-gray-700 text-sm font-bold mb-2">Email:<\/label>
+                            <label for="auth-email" class="block text-gray-700 text-sm font-bold mb-2">Email:\u003c/label>
                             <input type="email" id="auth-email" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <\/div>
+                        \u003c/div>
                         <div class="mb-4">
-                            <label for="auth-password" class="block text-gray-700 text-sm font-bold mb-2">Password:<\/label>
+                            <label for="auth-password" class="block text-gray-700 text-sm font-bold mb-2">Password:\u003c/label>
                             <input type="password" id="auth-password" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <\/div>
-                        <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">Masuk<\/button>
-                        <p class="text-center text-sm text-gray-600 mt-4">Belum punya akun? <a href="#" class="text-indigo-600 hover:underline">Daftar di sini<\/a><\/p>
-                    <\/form>
-                <\/section>
+                        \u003c/div>
+                        <button type="submit" class="w-full px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">Masuk\u003c/button>
+                        <p class="text-center text-sm text-gray-600 mt-4">Belum punya akun? <a href="#" class="text-indigo-600 hover:underline">Daftar di sini\u003c/a>\u003c/p>
+                    \u003c/form>
+                \u003c/section>
             `;
         }
 
@@ -707,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>${appTypeName} - Pratinjau</title>
-                <script src="https://cdn.tailwindcss.com"><\/script>
+                <script src="https://cdn.tailwindcss.com">\u003c/script>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                 <link href="https://fonts.googleapis.com/css2?family=${typographyFontFamily.split(',')[0].replace(/\s/g, '+')}&display=swap" rel="stylesheet">
@@ -738,14 +741,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                     ${animationsStyle}
-                <\/style>
-            <\/head>
+                \u003c/style>
+            \u003c/head>
             <body>
                 <main>
                     ${bodyContent}
-                <\/main>
-            <\/body>
-            <\/html>
+                \u003c/main>
+            \u003c/body>
+            \u003c/html>
         `;
     }
 
