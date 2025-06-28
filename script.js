@@ -112,23 +112,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateUI() {
         try {
-            welcomeScreen.classList.toggle('hidden', !showWelcome);
-            appContainer.classList.toggle('hidden', showWelcome || geminiResponseText.textContent !== '' || loading);
-            geminiResponseContainer.classList.toggle('hidden', geminiResponseText.textContent === '' || loading);
-            loadingOverlay.classList.toggle('hidden', !loading || aiSuggesting); // Show loading for main prompt generation
+            // Hide all main containers initially
+            welcomeScreen.classList.add('hidden');
+            appContainer.classList.add('hidden');
+            geminiResponseContainer.classList.add('hidden');
+            loadingOverlay.classList.add('hidden');
 
-            if (localStorage.getItem('promptGeneratorProgress')) {
-                loadProgressButton.classList.remove('hidden');
-            }
+            if (showWelcome) {
+                welcomeScreen.classList.remove('hidden');
+            } else if (loading || aiSuggesting) {
+                loadingOverlay.classList.remove('hidden');
+            } else if (geminiResponseText.textContent !== '') {
+                geminiResponseContainer.classList.remove('hidden');
+            } else { // Main app view
+                appContainer.classList.remove('hidden');
 
-            if (!showWelcome && geminiResponseText.textContent === '' && !loading) {
+                // Rest of the app container specific logic
                 setFilteredQuestions(currentMode);
                 const currentQuestion = filteredQuestions[currentStep];
 
                 if (!currentQuestion) {
                     currentStep = filteredQuestions.length - 1;
                     if (currentStep < 0) currentStep = 0;
-                    updateUI();
+                    updateUI(); // Recurse to re-evaluate state
                     return;
                 }
 
@@ -138,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 previousButton.classList.toggle('hidden', currentStep === 0);
                 nextButton.textContent = (currentStep === filteredQuestions.length - 1) ? 'Buat Prompt' : 'Lanjut';
-                
+
                 const designQuestionIds = ['designAesthetics', 'colorPalette', 'typographyChoice'];
                 const isDesignStep = currentQuestion && designQuestionIds.includes(currentQuestion.id);
                 randomizeDesignButton.classList.toggle('hidden', !isDesignStep);
@@ -154,18 +160,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveProgressButton.classList.remove('hidden');
 
                 const isStepValid = validateCurrentStep();
-                nextButton.disabled = !isStepValid || aiSuggesting; // Disable if invalid or AI is suggesting
+                nextButton.disabled = !isStepValid || aiSuggesting;
                 nextButton.classList.toggle('opacity-50', !isStepValid || aiSuggesting);
                 nextButton.classList.toggle('cursor-not-allowed', !isStepValid || aiSuggesting);
-
-            } else {
-                saveProgressButton.classList.add('hidden');
-                randomizeDesignButton.classList.add('hidden');
-                conceptualPreviewContainer.classList.add('hidden'); // Hide preview when not in app container
             }
-        }
-        catch (e) {
+
+            // Always check load progress button visibility
+            if (localStorage.getItem('promptGeneratorProgress')) {
+                loadProgressButton.classList.remove('hidden');
+            } else {
+                loadProgressButton.classList.add('hidden');
+            }
+
+        } catch (e) {
             console.error("Error in updateUI:", e);
+            // Fallback to show a general error message if UI update fails critically
+            welcomeScreen.classList.add('hidden');
+            appContainer.classList.add('hidden');
+            geminiResponseContainer.classList.remove('hidden'); // Show response container for error message
+            geminiResponseText.textContent = `Terjadi kesalahan fatal pada aplikasi: ${e.message}. Mohon coba segarkan halaman.`;
+            loadingOverlay.classList.add('hidden');
         }
     }
 
@@ -184,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 appWorkflow: 'Contoh: Pengguna login (Input) -> Tampilkan daftar tugas (Output) -> Pengguna menambahkan tugas baru (Input) -> Tugas disimpan, tampil di daftar (Proses) -> Pengguna mengubah status tugas (Input) -> Update status, notifikasi (Proses) -> Tampilkan tugas dengan status baru (Output).'
             },
             'blog-portfolio': {
-                keyDataModels: 'Contoh: Post (ID, Judul, Konten, Tanggal_Publikasi, Penulis, Kategori, Tag); Komentar (ID, ID_Post, ID_Pengguna, Komentar, Tanggal); Pengguna (ID, Nama, Email, Peran[Admin/Penulis]).\n\nHubungan: Post memiliki banyak Komentar. Pengguna bisa memiliki banyak Post.',
+                keyDataModels: 'Contoh: Post (ID, Judul, Konten, Tanggal_Publikasi, Penulis, Kategori, Tag); Komentar (ID, ID_Post, ID_Pengguna, Konten, Tanggal); Pengguna (ID, Nama, Email, Peran[Admin/Penulis]).\n\nHubungan: Post memiliki banyak Komentar. Pengguna bisa memiliki banyak Post.',
                 appWorkflow: 'Contoh: Pengunjung masuk ke website (Input) -> Melihat daftar post/relevan (Output) -> Klik post untuk detail (Input) -> Tampilkan konten post (Output) -> Pengunjung bisa isi formulir kontak (Input) -> Kirim email ke admin (Proses) -> Konfirmasi pengiriman (Output).'
             },
             'online-course': {
@@ -566,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Dashboard</a></li>
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Profil</a></li>
                         <li class="mb-2"><a href="#" class="hover:text-gray-300">Pengaturan</a></li>
-                    </ul>
+                    <\/ul>
                 <\/aside>
             `;
         }
